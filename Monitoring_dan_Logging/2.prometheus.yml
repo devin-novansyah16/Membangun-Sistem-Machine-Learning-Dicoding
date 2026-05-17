@@ -1,0 +1,66 @@
+# prometheus.yml
+# ================
+# Konfigurasi Prometheus untuk monitoring Titanic ML System
+# Author: Devin Novansyah
+
+global:
+  scrape_interval:     15s   # Interval scrape default
+  evaluation_interval: 15s   # Interval evaluasi rules
+  scrape_timeout:      10s
+
+  # Label global yang ditambahkan ke semua metrik
+  external_labels:
+    monitor   : 'titanic-ml-monitor'
+    author    : 'devin-novansyah'
+    project   : 'titanic-survival-prediction'
+
+# ──────────────────────────────────────────────
+# ALERTING (Grafana Alertmanager)
+# ──────────────────────────────────────────────
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - 'localhost:9093'   # Alertmanager default port
+
+# ──────────────────────────────────────────────
+# SCRAPE CONFIGS
+# ──────────────────────────────────────────────
+scrape_configs:
+
+  # 1. Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    metrics_path: /metrics
+
+  # 2. Titanic Inference API (FastAPI + prometheus-client)
+  - job_name: 'titanic_inference_api'
+    static_configs:
+      - targets: ['host.docker.internal:5001']
+    metrics_path: /metrics
+    scrape_interval: 10s
+    params:
+      format: ['prometheus']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'titanic-api-devin-novansyah'
+
+  # 3. Custom Prometheus Exporter
+  - job_name: 'titanic_custom_exporter'
+    static_configs:
+      - targets: ['host.docker.internal:8000']
+    metrics_path: /metrics
+    scrape_interval: 15s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'titanic-exporter-devin-novansyah'
+
+  # 4. Node Exporter (opsional - monitoring sistem host)
+  # Jalankan: docker run -d --net="host" prom/node-exporter
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['host.docker.internal:9100']
+    scrape_interval: 30s

@@ -1,0 +1,4 @@
+=== FOLDER: 1.bukti_serving ===
+Isi folder ini dengan screenshot yang sesuai.
+Lihat README.md untuk panduan lengkap.
+Author: Devin Novansyah

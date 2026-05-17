@@ -1,0 +1,11 @@
+Classification Report - Titanic
+Author: Devin Novansyah
+=============================================
+              precision    recall  f1-score   support
+
+Not Survived       0.83      0.86      0.84       110
+    Survived       0.77      0.71      0.74        69
+
+    accuracy                           0.80       179
+   macro avg       0.80      0.79      0.79       179
+weighted avg       0.80      0.80      0.80       179
